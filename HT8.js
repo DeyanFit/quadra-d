@@ -6,8 +6,11 @@ const context = canvas.getContext('2d')
 canvas.width = innerWidth
 canvas.height = innerHeight
 
-//player and constructr for changes 
-//+ adding other players
+
+
+const score = document.querySelector('#score')
+    //player and constructr for changes 
+    //+ adding other players
 class Player {
     constructor(x, y, size, colour) {
             this.x = x
@@ -84,10 +87,16 @@ class Enemy {
 const sizep1 = 50
 const p1x = canvas.width / 2
 const p1y = canvas.height - sizep1 * 2
-const player1 = new Player(p1x, p1y, sizep1, 'orange')
 
-const bullets = []
-const enemies = []
+let player1 = new Player(p1x, p1y, sizep1, 'orange')
+let bullets = []
+let enemies = []
+
+function res() {
+    player1 = new Player(p1x, p1y, sizep1, 'orange')
+    bullets = []
+    enemies = []
+}
 
 //spawn enemy
 function EnemiesSpawn() {
@@ -108,21 +117,40 @@ function EnemiesSpawn() {
         enemies.push(new Enemy(x, y, sizeE, colour, speed))
     }, 3000)
 }
-
-//animation bullets
+let playerhit
+let Score = 0
+    //animation
 function animate() {
-    requestAnimationFrame(animate)
+    playerhit = requestAnimationFrame(animate)
     context.clearRect(0, 0, canvas.width, canvas.height)
     player1.show()
     bullets.forEach((bullet) => {
         bullet.update()
     })
 
-    enemies.forEach((enemy) => {
+    enemies.forEach((enemy, enemyI) => {
         enemy.update()
+
+        const distance = Math.hypot(
+            player1.x - enemy.x, player1.y - enemy.y)
+        if (distance - enemy.sizeE - player1.size < 1) {
+            cancelAnimationFrame(playerhit)
+        }
+
+        //hit bullet enemy
+        bullets.forEach((bullet, bulletI) => {
+            const distance = Math.hypot(
+                bullet.x - enemy.x, bullet.y - enemy.y)
+
+            if (distance - enemy.sizeE - bullet.size < 1) {
+                enemies.splice(enemyI, 1)
+                bullets.splice(bulletI, 1)
+                Score++
+                score.innerHTML = Score
+            }
+        })
     })
 }
-
 //creating bullets
 addEventListener('click', (event) => {
     //angles bullets
@@ -138,8 +166,11 @@ addEventListener('click', (event) => {
         new Bullet(
             canvas.width / 2,
             canvas.height - sizep1 * 2,
-            10, 'red', speed)
+            10, 'orange', speed)
     )
 })
-animate()
-EnemiesSpawn()
+addEventListener('keydown', () => {
+    res()
+    animate()
+    EnemiesSpawn()
+})

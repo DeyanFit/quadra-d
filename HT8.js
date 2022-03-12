@@ -1,25 +1,18 @@
-//canvas
 const canvas = document.querySelector('canvas');
-
 const context = canvas.getContext('2d')
 
 canvas.width = innerWidth
 canvas.height = innerHeight
 
-
-
 const score = document.querySelector('#score')
-    //player and constructr for changes 
-    //+ adding other players
+
 class Player {
     constructor(x, y, size, colour) {
-            this.x = x
-            this.y = y
-
-            this.size = size
-            this.colour = colour
-        }
-        //player appearance 
+        this.x = x
+        this.y = y
+        this.size = size
+        this.colour = colour
+    }
     show() {
         context.beginPath()
         context.arc(this.x, this.y,
@@ -29,18 +22,15 @@ class Player {
         context.fill()
     }
 }
-//shooting 
+
 class Bullet {
     constructor(x, y, size, colour, speed) {
-            this.x = x
-            this.y = y
-
-            this.size = size
-            this.colour = colour
-
-            this.speed = speed
-        }
-        //bullet appearance 
+        this.x = x
+        this.y = y
+        this.size = size
+        this.colour = colour
+        this.speed = speed
+    }
     show() {
         context.beginPath()
         context.arc(this.x, this.y,
@@ -56,18 +46,14 @@ class Bullet {
     }
 }
 
-//enemies create 
 class Enemy {
     constructor(x, y, sizeE, colour, speed) {
-            this.x = x
-            this.y = y
-
-            this.sizeE = sizeE
-            this.colour = colour
-
-            this.speed = speed
-        }
-        //enemy appearance 
+        this.x = x
+        this.y = y
+        this.sizeE = sizeE
+        this.colour = colour
+        this.speed = speed
+    }
     show() {
         context.beginPath()
         context.arc(this.x, this.y,
@@ -83,43 +69,38 @@ class Enemy {
     }
 }
 
-//create p1
-const sizep1 = 50
+const sizep1 = 25
 const p1x = canvas.width / 2
-const p1y = canvas.height - sizep1 * 2
+const p1y = canvas.height - sizep1
 
-let player1 = new Player(p1x, p1y, sizep1, 'orange')
+let player1 = new Player(p1x, p1y, sizep1, 'red')
 let bullets = []
 let enemies = []
 
 function res() {
-    player1 = new Player(p1x, p1y, sizep1, 'orange')
+    player1 = new Player(p1x, p1y, sizep1, 'red')
     bullets = []
     enemies = []
 }
 
-//spawn enemy
 function EnemiesSpawn() {
     setInterval(() => {
         const x = Math.random() * canvas.width
         const y = -Math.random() * 200
-        const sizeE = 40
+        const sizeE = Math.random() * 20 + 10
         const colour = 'blue'
-            //enemy angles
         const angle = Math.atan2((canvas.height - sizep1 * 2) - y,
             canvas.width / 2 - x)
-
         const speed = {
             x: Math.cos(angle),
             y: Math.sin(angle)
         }
-
         enemies.push(new Enemy(x, y, sizeE, colour, speed))
     }, 3000)
 }
 let playerhit
 let Score = 0
-    //animation
+
 function animate() {
     playerhit = requestAnimationFrame(animate)
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -127,17 +108,14 @@ function animate() {
     bullets.forEach((bullet) => {
         bullet.update()
     })
-
     enemies.forEach((enemy, enemyI) => {
         enemy.update()
-
         const distance = Math.hypot(
             player1.x - enemy.x, player1.y - enemy.y)
         if (distance - enemy.sizeE - player1.size < 1) {
             cancelAnimationFrame(playerhit)
         }
 
-        //hit bullet enemy
         bullets.forEach((bullet, bulletI) => {
             const distance = Math.hypot(
                 bullet.x - enemy.x, bullet.y - enemy.y)
@@ -151,22 +129,19 @@ function animate() {
         })
     })
 }
-//creating bullets
+
 addEventListener('click', (event) => {
-    //angles bullets
     const angle = Math.atan2(event.clientY - (canvas.height - sizep1 * 2),
         event.clientX - canvas.width / 2)
-
     const speed = {
         x: Math.cos(angle),
         y: Math.sin(angle)
     }
-
     bullets.push(
         new Bullet(
-            canvas.width / 2,
-            canvas.height - sizep1 * 2,
-            10, 'orange', speed)
+            canvas.width / 2 + 5,
+            canvas.height - sizep1 * 2 + 5,
+            5, 'red', speed)
     )
 })
 addEventListener('keydown', () => {

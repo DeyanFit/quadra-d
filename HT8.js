@@ -1,8 +1,8 @@
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d')
 
-canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.width = innerWidth - 25
+canvas.height = innerHeight - 25
 
 const score = document.querySelector('#score')
 
@@ -81,6 +81,8 @@ function res() {
     player1 = new Player(p1x, p1y, sizep1, 'red')
     bullets = []
     enemies = []
+    Score = 0
+    score.innerHTML = Score
 }
 
 function EnemiesSpawn() {
@@ -148,4 +150,5 @@ addEventListener('keydown', () => {
     res()
     animate()
     EnemiesSpawn()
+    console.log(Score)
 })
